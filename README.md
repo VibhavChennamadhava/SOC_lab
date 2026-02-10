@@ -446,3 +446,11 @@ sudo /var/ossec/bin/agent-auth -m <MANAGER_IP> -p 1515 -A "ubuntu-agent-01"
 ### 5) IP reputation alert without block
 - Confirm active response points to correct `<rules_id>` and restart manager.
 
+
+## Debugging 
+
+Some issues I ran into and fixed during the lab:
+
+- **Agent service was running but not visible in dashboard** because I initially pointed the agent to a non-reachable manager IP (NAT path). I corrected the manager IP to a reachable host-only/bridged interface and reconnected successfully.
+- **Enrollment errors (`invalid agent name`)** happened when reusing stale identity/keys. I cleaned existing keys, used a unique agent name, and re-enrolled.
+- **Small configuration typo in syscheck** (`report_changer` vs `report_changes`) caused confusion during FIM tuning. I corrected it and documented the exact valid attribute.
