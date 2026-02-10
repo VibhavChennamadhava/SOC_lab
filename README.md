@@ -46,8 +46,8 @@ sudo ss -lntup | egrep '1514|1515|443|5601|9200'
 
 #### 2) Verify manager port reachability from agent (Agent VM)
 ```bash
-nc -vz <MANAGER_IP> 1514
-nc -vz <MANAGER_IP> 1515
+nc -vz 192.168.56.105 1514
+nc -vz 192.168.56.105 1515
 ```
 
 **Expected Output**
@@ -57,7 +57,7 @@ nc -vz <MANAGER_IP> 1515
 ```bash
 sudo systemctl stop wazuh-agent
 sudo rm -f /var/ossec/etc/client.keys
-sudo /var/ossec/bin/agent-auth -m <MANAGER_IP> -p 1515 -A "ubuntu-agent-01"
+sudo /var/ossec/bin/agent-auth -m 192.168.56.105 -p 1515 -A "ubuntu-agent-01"
 sudo systemctl start wazuh-agent
 sudo systemctl status wazuh-agent --no-pager
 sudo tail -n 120 /var/ossec/logs/ossec.log
@@ -83,8 +83,8 @@ agent.name: "ubuntu-agent-01"
 - **Fix**: Re-enroll using reachable host-only/bridged manager IP
 
 ```bash
-nc -vz <MANAGER_IP> 1514
-nc -vz <MANAGER_IP> 1515
+nc -vz 192.168.56.105 1514
+nc -vz 192.168.56.105 1515
 sudo tail -n 200 /var/ossec/logs/ossec.log
 ```
 
@@ -95,7 +95,7 @@ sudo tail -n 200 /var/ossec/logs/ossec.log
 ```bash
 sudo systemctl stop wazuh-agent
 sudo rm -f /var/ossec/etc/client.keys
-sudo /var/ossec/bin/agent-auth -m <MANAGER_IP> -p 1515 -A "ubuntu-agent-01"
+sudo /var/ossec/bin/agent-auth -m 192.168.56.105 -p 1515 -A "ubuntu-agent-01"
 sudo systemctl start wazuh-agent
 ```
 
@@ -381,7 +381,7 @@ sudo systemctl status apache2 --no-pager
 #### 2) Generate repeated requests
 ```bash
 for i in {1..10}; do
-  curl -s -o /dev/null -w "%{http_code}\n" http://<TARGET_IP>/
+  curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.106/
   sleep 1
 done
 ```
@@ -425,8 +425,8 @@ rule.id:100100
 
 ### 1) Agent not visible in dashboard
 ```bash
-nc -vz <MANAGER_IP> 1514
-nc -vz <MANAGER_IP> 1515
+nc -vz 192.168.56.105 1514
+nc -vz 192.168.56.105 1515
 sudo tail -n 200 /var/ossec/logs/ossec.log
 ```
 - Re-enroll if needed with cleaned client key.
@@ -434,7 +434,7 @@ sudo tail -n 200 /var/ossec/logs/ossec.log
 ### 2) Enrollment fails with invalid agent name
 ```bash
 sudo rm -f /var/ossec/etc/client.keys
-sudo /var/ossec/bin/agent-auth -m <MANAGER_IP> -p 1515 -A "ubuntu-agent-01"
+sudo /var/ossec/bin/agent-auth -m 192.168.56.105 -p 1515 -A "ubuntu-agent-01"
 ```
 
 ### 3) FIM events missing
@@ -446,11 +446,3 @@ sudo /var/ossec/bin/agent-auth -m <MANAGER_IP> -p 1515 -A "ubuntu-agent-01"
 ### 5) IP reputation alert without block
 - Confirm active response points to correct `<rules_id>` and restart manager.
 
-
-## Debugging 
-
-Some issues I ran into and fixed during the lab:
-
-- **Agent service was running but not visible in dashboard** because I initially pointed the agent to a non-reachable manager IP (NAT path). I corrected the manager IP to a reachable host-only/bridged interface and reconnected successfully.
-- **Enrollment errors (`invalid agent name`)** happened when reusing stale identity/keys. I cleaned existing keys, used a unique agent name, and re-enrolled.
-- **Small configuration typo in syscheck** (`report_changer` vs `report_changes`) caused confusion during FIM tuning. I corrected it and documented the exact valid attribute.
