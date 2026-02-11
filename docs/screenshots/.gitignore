@@ -1,7 +1,0 @@
-# Keep folder structure in git, but do not commit binary screenshots.
-*.png
-!/.gitkeep
-!/setup/.gitkeep
-!/poc-fim/.gitkeep
-!/poc-rootcheck/.gitkeep
-!/poc-ip-reputation/.gitkeep
