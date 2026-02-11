@@ -260,7 +260,7 @@ sudo systemctl status ssh --no-pager
 - SSH service is `active (running)` and listening on port `22`
 
 Screenshot description: Agent VM SSH service enabled and running.
-![SSH service status on agent](./screenshots/poc-2-bruteforce/detect_bruteforce.png)
+![SSH service status on agent](./screenshots/detect_bruteforce.png)
 
 ### Step 2 — Install test tool on Manager VM
 If package manager is interrupted, fix first:
@@ -279,7 +279,7 @@ sudo apt install -y hydra
 - Hydra installs successfully on manager VM
 
 Screenshot description: Hydra installation output on manager VM.
-![Hydra installation proof](./screenshots/poc-2-bruteforce/hydra.png)
+![Hydra installation proof](./screenshots/hydra.png)
 
 ### Step 3 — Prepare simple password list
 Create a small wordlist on manager VM (lab-only test data).
@@ -288,7 +288,7 @@ Create a small wordlist on manager VM (lab-only test data).
 - Password list file created and ready for simulation
 
 Screenshot description: Password list creation used for brute-force simulation.
-![Password list preparation](./screenshots/poc-2-bruteforce/passlist.png)
+![Password list preparation](./screenshots/passlist.png)
 
 ### Step 4 — Simulate brute-force attempts (authorized lab only)
 From manager VM, generate repeated SSH login attempts against agent VM using wrong credentials.
@@ -298,7 +298,7 @@ From manager VM, generate repeated SSH login attempts against agent VM using wro
 - `/var/log/auth.log` on agent records failed attempts
 
 Screenshot description: Brute-force simulation execution from manager VM.
-![Brute-force attack initiated](./screenshots/poc-2-bruteforce/initiate_attack.png)
+![Brute-force attack initiated](./screenshots/initiate_attack.png)
 
 ### Step 5 — Validate telemetry on Agent VM (ground truth)
 ```bash
@@ -310,7 +310,7 @@ sudo tail -n 50 /var/log/auth.log
 - Entries like `Connection closed by invalid user ...`
 
 Screenshot description: Agent auth.log confirms failed SSH login attempts.
-![Agent auth.log brute-force evidence](./screenshots/poc-2-bruteforce/logs_agent_brute.png)
+![Agent auth.log brute-force evidence](./screenshots/logs_agent_brute.png)
 
 ### Step 6 — Wazuh detection evidence (Threat Hunting)
 In dashboard: **Threat Hunting → Events**
@@ -333,7 +333,7 @@ rule.groups: ssh
 - Individual failed-login alerts + correlated brute-force style alert
 
 Screenshot description: Threat Hunting output with SSH brute-force related rules.
-![Wazuh brute-force detection output](./screenshots/poc-2-bruteforce/output_brute.png)
+![Wazuh brute-force detection output](./screenshots/output_brute.png)
 
 ### Step 7 — MITRE ATT&CK mapping
 From event details, this activity maps to:
@@ -348,7 +348,7 @@ Tactics observed:
 - MITRE techniques and tactics visible in event details
 
 Screenshot description: MITRE ATT&CK mapping shown in Wazuh event details.
-![MITRE mapping from brute-force event](./screenshots/poc-2-bruteforce/output_brute2.png)
+![MITRE mapping from brute-force event](./screenshots/output_brute2.png)
 
 ### What this proves for a SOC analyst role
 - Log source validation using `/var/log/auth.log`
